@@ -1,0 +1,58 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+enum Role {
+    employer
+    applicant
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String         @map("password_hash")
+  role          Role
+  createdAt     DateTime       @default(now()) @map("created_at")
+  jobs          Job[]
+  applications  Application[]
+  refreshTokens RefreshToken[]
+  @@map("users")
+}
+
+model Job {
+  id           String        @id @default(cuid())
+  title        String
+  description  String
+  employerId   String        @map("employer_id")
+  employer     User          @relation(fields: [employerId], references: [id])
+  createdAt    DateTime      @default(now()) @map("created_at")
+  applications Application[]
+  @@map("jobs")
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  jobId       String   @map("job_id")
+  applicantId String   @map("applicant_id")
+  coverLetter String   @map("cover_letter")
+  createdAt   DateTime @default(now()) @map("created_at")
+  job         Job      @relation(fields: [jobId], references: [id])
+  applicant   User     @relation(fields: [applicantId], references: [id])
+  @@unique([jobId, applicantId])
+  @@map("applications")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  tokenHash String   @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  @@map("refresh_tokens")
+}

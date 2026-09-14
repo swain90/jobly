@@ -3,8 +3,14 @@
     "private": true,
     "type": "module",
     "scripts": {
-      "dev": "tsx watch --env-file=../../.env src/index.ts",
-      "test": "vitest run",
-      "build": "tsc"
+        "dev": "tsx watch --env-file=../../.env src/index.ts",
+        "test": "vitest run",
+        "build": "tsc",
+        "db:migrate": "prisma migrate dev",
+        "db:generate": "prisma generate"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.19.3",
+        "prisma": "^6.19.3"
     }
-  }
+}
