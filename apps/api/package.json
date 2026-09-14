@@ -1,0 +1,10 @@
+{
+    "name": "@jobboard/api",
+    "private": true,
+    "type": "module",
+    "scripts": {
+      "dev": "tsx watch --env-file=../../.env src/index.ts",
+      "test": "vitest run",
+      "build": "tsc"
+    }
+  }

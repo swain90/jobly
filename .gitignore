@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+*.log
+coverage
+apps/web/dist
+infra/cdk.out
+docs/superpowers
+docs/specs

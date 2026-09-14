@@ -1,0 +1,11 @@
+{
+    "name": "simple-node-app",
+    "private": true,
+    "workspaces": ["apps/*"],
+    "scripts": {
+      "dev:api": "npm run dev -w @jobboard/api",
+      "dev:worker": "npm run dev -w @jobboard/worker",
+      "dev:web": "npm run dev -w @jobboard/web",
+      "test:api": "npm run test -w @jobboard/api"
+    }
+  }
