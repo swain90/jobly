@@ -39,7 +39,7 @@ export async function authRoutes(app: FastifyInstance) {
             user: { id: user.id, email: user.email, role: user.role },
         });       
     });
-    app.post('auth/login', async (request, reply) => {
+    app.post('/auth/login', async (request, reply) => {
         const parsed = loginBody.safeParse(request.body);
         if (!parsed.success) {
             return sendError(reply, 400, 'VALIDATION_ERROR', 'Invalid body credentials')

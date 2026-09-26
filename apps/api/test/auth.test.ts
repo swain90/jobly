@@ -37,7 +37,7 @@ describe('auth', () => {
 
         const body = login.json();
         expect(body.accessToken).toBeTypeOf('string');
-        expect(login.cookies.some((c) => c.name === 'refresh token')).toBe(true);
+        expect(login.cookies.some((c) => c.name === 'refresh_token')).toBe(true);
 
         await app.close();
     });
