@@ -1,6 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
-import { StringValidation } from 'zod/v3';
 
 export type AccessPayload = {
     sub: string;
@@ -22,7 +21,7 @@ export async function signAccessToken(payload: AccessPayload): Promise<string> {
     .sign(getSecret());
 }
 
-export async function verfiyAccessToken(token: string): Promise<AccessPayload> {
+export async function verifyAccessToken(token: string): Promise<AccessPayload> {
     const { payload } = await jwtVerify(token, getSecret());
     return {
         sub: payload.sub as string,
