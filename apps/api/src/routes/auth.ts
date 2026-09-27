@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 import { sendError } from "../lib/errors.js";
 import { hashPassword, verifyPassword } from "../lib/password.js";
-import { createRefreshToken, signAccessToken, } from '../lib/tokens.js';
+import { createRefreshToken, signAccessToken, hashRefreshToken, } from '../lib/tokens.js';
 
 const registerBody = z.object({
     email: z.string().email(),
@@ -82,4 +82,39 @@ export async function authRoutes(app: FastifyInstance) {
         });
 
     });
+
+    app.post('/auth/refresh', async (request, reply) => {
+        const raw = request.cookies.refresh_token;
+        if(!raw) {
+            return sendError(reply, 401, 'UNAUTHORIZED', 'Missing refresh token');
+        }
+
+        const tokenHash = hashRefreshToken(raw);
+        const stored = await prisma.refreshToken.findFirst({
+            where: { tokenHash, expiresAt: { gt: new Date() } },
+            include: { user: true },
+        });
+        if (!stored) {
+            return sendError(reply, 401, 'UNAUTHORIZED', 'Invalid refresh token');
+          }
+
+        const accessToken = await signAccessToken({
+            sub: stored.user.id,
+            role: stored.user.role,
+        });
+        return reply.send({ accessToken });
+    });
+
+    app.post('/auth/logout', async (request, reply) => {
+        const raw = request.cookies.refresh_token;
+        if (raw) {
+          await prisma.refreshToken.deleteMany({
+            where: { tokenHash: hashRefreshToken(raw) },
+          });
+        }
+        reply.clearCookie('refresh_token', { path: '/' });
+        return reply.status(204).send();
+      });
+    
+
 }
